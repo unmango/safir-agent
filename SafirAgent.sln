@@ -15,6 +15,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Safir.Agent.Protos", "src\S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Safir.Agent.Client", "src\Safir.Agent.Client\Safir.Agent.Client.csproj", "{98BE40BA-5E2C-487C-8B9F-D6BC03F23E34}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{2404A7E6-574A-44F2-8C83-A9EB4B837962}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".vscode", ".vscode", "{3782019D-68FB-43A1-A89D-83059684FEA1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{61F30D70-06F4-4008-BF74-7816C16C6502}"
+ProjectSection(SolutionItems) = preProject
+	global.json = global.json
+	NuGet.Config = NuGet.Config
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
