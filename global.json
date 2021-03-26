@@ -1,1 +1,6 @@
-[object Object]
+{
+  "sdk": {
+    "version": "5.0.201",
+    "rollForward": "latestMinor"
+  }
+}
