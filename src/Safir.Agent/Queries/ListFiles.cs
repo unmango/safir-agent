@@ -14,7 +14,7 @@ namespace Safir.Agent.Queries
 
     internal record ListFilesResponse(IEnumerable<File> Files)
     {
-        public static ListFilesResponse Empty = new(Enumerable.Empty<File>());
+        public static readonly ListFilesResponse Empty = new(Enumerable.Empty<File>());
     }
 
     internal class ListFilesHandler : RequestHandler<ListFilesRequest, ListFilesResponse>

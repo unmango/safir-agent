@@ -3,9 +3,7 @@ import "google/protobuf/empty.proto";
 
 option csharp_namespace = "Safir.Agent";
 
-package files;
-
-service Files {
+service FilesService {
   rpc List(google.protobuf.Empty) returns (stream File);
 }
 

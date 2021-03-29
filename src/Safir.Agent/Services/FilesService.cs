@@ -10,7 +10,7 @@ using Safir.Agent.Queries;
 
 namespace Safir.Agent.Services
 {
-    internal class FilesService : Files.FilesBase
+    internal class FilesService : Agent.FilesService.FilesServiceBase
     {
         private readonly ISender _sender;
         private readonly ILogger<FilesService> _logger;

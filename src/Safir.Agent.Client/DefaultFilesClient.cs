@@ -9,10 +9,10 @@ namespace Safir.Agent.Client
 {
     internal class DefaultFilesClient : IFilesClient
     {
-        private readonly Files.FilesClient _client;
+        private readonly FilesService.FilesServiceClient _client;
         private readonly ILogger<DefaultFilesClient> _logger;
 
-        public DefaultFilesClient(Files.FilesClient client, ILogger<DefaultFilesClient> logger)
+        public DefaultFilesClient(FilesService.FilesServiceClient client, ILogger<DefaultFilesClient> logger)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _logger = logger;
