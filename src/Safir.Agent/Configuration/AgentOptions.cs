@@ -1,14 +1,10 @@
 namespace Safir.Agent.Configuration
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal record AgentOptions
+    internal class AgentOptions
     {
-        public static AgentOptions Default = new() {
-            MaxDepth = 69
-        };
-        
-        public string? Root { get; set; }
-        
+        public string? DataDirectory { get; set; }
+
         public int MaxDepth { get; set; }
     }
 }

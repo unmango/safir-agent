@@ -15,5 +15,7 @@ namespace Safir.Agent.Domain
             string path,
             string searchPattern,
             EnumerationOptions enumerationOptions);
+
+        bool Exists(string? path);
     }
 }

@@ -30,5 +30,10 @@ namespace Safir.Agent.Domain
         {
             return Directory.EnumerateFileSystemEntries(path, searchPattern, enumerationOptions);
         }
+
+        public bool Exists(string? path)
+        {
+            return Directory.Exists(path);
+        }
     }
 }

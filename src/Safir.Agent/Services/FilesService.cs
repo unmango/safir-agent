@@ -1,33 +1,23 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Grpc.Core.Utils;
+using MediatR;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Safir.Agent.Configuration;
-using Safir.Agent.Domain;
+using Safir.Agent.Queries;
 
 namespace Safir.Agent.Services
 {
     internal class FilesService : Files.FilesBase
     {
-        private readonly IOptions<AgentOptions> _options;
-        private readonly IDirectory _directory;
-        private readonly IFile _file;
+        private readonly ISender _sender;
         private readonly ILogger<FilesService> _logger;
 
-        public FilesService(
-            IOptions<AgentOptions> options,
-            IDirectory directory,
-            IFile file,
-            ILogger<FilesService> logger)
+        public FilesService(ISender sender, ILogger<FilesService> logger)
         {
-            _options = options ?? throw new ArgumentNullException(nameof(options));
-            _directory = directory ?? throw new ArgumentNullException(nameof(directory));
-            _file = file ?? throw new ArgumentNullException(nameof(file));
+            _sender = sender ?? throw new ArgumentNullException(nameof(sender));
             _logger = logger;
         }
 
@@ -36,24 +26,14 @@ namespace Safir.Agent.Services
             IServerStreamWriter<File> responseStream,
             ServerCallContext context)
         {
-            if (string.IsNullOrWhiteSpace(_options.Value.Root))
-            {
-                _logger.LogDebug("No root configured");
-                return;
-            }
-            
-            var entries = _directory.EnumerateFileSystemEntries(_options.Value.Root);
+            _logger.LogTrace("Sending list files request");
+            var result = await _sender.Send(new ListFilesRequest());
+            _logger.LogTrace("Got list files response");
 
-            foreach (var file in GetFiles(entries, _file))
-            {
-                await responseStream.WriteAsync(new File {
-                    Path = file,
-                });
-            }
-        }
+            if (!result.Files.Any()) return;
 
-        private IEnumerable<string> GetFiles(IEnumerable<string> entries, int maxDepth)
-        {
+            _logger.LogTrace("Writing files to response stream");
+            await responseStream.WriteAllAsync(result.Files);
         }
     }
 }
