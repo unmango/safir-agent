@@ -8,12 +8,12 @@ using Safir.Agent.Protos;
 
 namespace Safir.Agent.Client
 {
-    internal class DefaultFilesClient : IFilesClient
+    internal class DefaultFileSystemClient : IFileSystemClient
     {
         private readonly FileSystem.FileSystemClient _client;
-        private readonly ILogger<DefaultFilesClient> _logger;
+        private readonly ILogger<DefaultFileSystemClient> _logger;
 
-        public DefaultFilesClient(FileSystem.FileSystemClient client, ILogger<DefaultFilesClient> logger)
+        public DefaultFileSystemClient(FileSystem.FileSystemClient client, ILogger<DefaultFileSystemClient> logger)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _logger = logger;

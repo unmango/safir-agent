@@ -1,3 +1,5 @@
+using System;
+using Grpc.Net.ClientFactory;
 using Microsoft.Extensions.DependencyInjection;
 using Safir.Agent.Protos;
 
@@ -11,12 +13,18 @@ namespace Safir.Agent.Client.DependencyInjection
             services.AddHttpClient();
             services.AddOptions();
 
-            services.AddTransient<IFilesClient, DefaultFilesClient>();
-            services.AddGrpcClient<FileSystem.FileSystemClient>((sp, options) => {
-                // TODO: Set service url
-            });
+            services.AddTransient<IFileSystemClient, DefaultFileSystemClient>();
+            services.AddGrpcClient<FileSystem.FileSystemClient>(ConfigureGrpcClient);
+
+            services.AddTransient<IHostClient, DefaultHostClient>();
+            services.AddGrpcClient<Host.HostClient>(ConfigureGrpcClient);
             
             return services;
+        }
+
+        private static void ConfigureGrpcClient(IServiceProvider services, GrpcClientFactoryOptions options)
+        {
+            // TODO: Set service url
         }
     }
 }

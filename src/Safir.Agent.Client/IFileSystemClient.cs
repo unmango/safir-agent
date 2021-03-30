@@ -4,7 +4,7 @@ using Safir.Agent.Protos;
 
 namespace Safir.Agent.Client
 {
-    public interface IFilesClient
+    public interface IFileSystemClient
     {
         IAsyncEnumerable<FileSystemEntry> ListAsync(CancellationToken cancellationToken = default);
     }
