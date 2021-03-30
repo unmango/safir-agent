@@ -51,7 +51,7 @@ namespace Safir.Agent
             app.UseRouting();
 
             app.UseEndpoints(endpoints => {
-                endpoints.MapGrpcService<FilesService>();
+                endpoints.MapGrpcService<FileSystemService>();
 
                 if (env.IsDevelopment())
                 {

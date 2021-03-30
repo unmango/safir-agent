@@ -6,16 +6,17 @@ using Grpc.Core;
 using Grpc.Core.Utils;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Safir.Agent.Protos;
 using Safir.Agent.Queries;
 
 namespace Safir.Agent.Services
 {
-    internal class FilesService : Agent.FilesService.FilesServiceBase
+    internal class FileSystemService : FileSystem.FileSystemBase
     {
         private readonly ISender _sender;
-        private readonly ILogger<FilesService> _logger;
+        private readonly ILogger<FileSystemService> _logger;
 
-        public FilesService(ISender sender, ILogger<FilesService> logger)
+        public FileSystemService(ISender sender, ILogger<FileSystemService> logger)
         {
             _sender = sender ?? throw new ArgumentNullException(nameof(sender));
             _logger = logger;
@@ -23,7 +24,7 @@ namespace Safir.Agent.Services
 
         public override async Task List(
             Empty request,
-            IServerStreamWriter<File> responseStream,
+            IServerStreamWriter<FileSystemEntry> responseStream,
             ServerCallContext context)
         {
             _logger.LogTrace("Sending list files request");

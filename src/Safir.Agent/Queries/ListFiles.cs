@@ -7,14 +7,15 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Safir.Agent.Configuration;
 using Safir.Agent.Domain;
+using Safir.Agent.Protos;
 
 namespace Safir.Agent.Queries
 {
     internal record ListFilesRequest : IRequest<ListFilesResponse>;
 
-    internal record ListFilesResponse(IEnumerable<File> Files)
+    internal record ListFilesResponse(IEnumerable<FileSystemEntry> Files)
     {
-        public static readonly ListFilesResponse Empty = new(Enumerable.Empty<File>());
+        public static readonly ListFilesResponse Empty = new(Enumerable.Empty<FileSystemEntry>());
     }
 
     internal class ListFilesHandler : RequestHandler<ListFilesRequest, ListFilesResponse>
@@ -56,7 +57,7 @@ namespace Safir.Agent.Queries
             var entries = _directory.EnumerateFileSystemEntries(root, "*", _enumerationOptions);
             
             _logger.LogTrace("Creating file response messages");
-            var files = entries.Select(x => new File { Path = x });
+            var files = entries.Select(x => new FileSystemEntry { Path = x });
             
             return new ListFilesResponse(files);
         }

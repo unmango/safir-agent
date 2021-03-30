@@ -4,21 +4,22 @@ using System.Threading;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
+using Safir.Agent.Protos;
 
 namespace Safir.Agent.Client
 {
     internal class DefaultFilesClient : IFilesClient
     {
-        private readonly FilesService.FilesServiceClient _client;
+        private readonly FileSystem.FileSystemClient _client;
         private readonly ILogger<DefaultFilesClient> _logger;
 
-        public DefaultFilesClient(FilesService.FilesServiceClient client, ILogger<DefaultFilesClient> logger)
+        public DefaultFilesClient(FileSystem.FileSystemClient client, ILogger<DefaultFilesClient> logger)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _logger = logger;
         }
         
-        public IAsyncEnumerable<File> ListAsync(CancellationToken cancellationToken = default)
+        public IAsyncEnumerable<FileSystemEntry> ListAsync(CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("Making request to list files from agent");
             var streamingCall = _client.List(new Empty(), null, null, cancellationToken);

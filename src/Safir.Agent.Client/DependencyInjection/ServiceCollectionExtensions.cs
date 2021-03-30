@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Safir.Agent.Protos;
 
 namespace Safir.Agent.Client.DependencyInjection
 {
@@ -11,7 +12,7 @@ namespace Safir.Agent.Client.DependencyInjection
             services.AddOptions();
 
             services.AddTransient<IFilesClient, DefaultFilesClient>();
-            services.AddGrpcClient<Files.FilesClient>((sp, options) => {
+            services.AddGrpcClient<FileSystem.FileSystemClient>((sp, options) => {
                 // TODO: Set service url
             });
             
