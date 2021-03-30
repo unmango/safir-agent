@@ -9,6 +9,7 @@ service Host {
 
 message HostInfo {
   string hostName = 1;
-  string dataDirectory = 2;
-  int32 maxDepth = 3;
+  string machineName = 2;
+  string dataDirectory = 3;
+  int32 maxDepth = 4;
 }
