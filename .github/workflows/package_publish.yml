@@ -5,6 +5,7 @@ on:
 env:
   DOTNET_NOLOGO: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  CI: true
 jobs:
   package_build:
     runs-on: ubuntu-latest
