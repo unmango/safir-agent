@@ -14,7 +14,6 @@
     <RepositoryType>git</RepositoryType>
     <DebugType>portable</DebugType>
     <IsPackable>false</IsPackable>
-    <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <LangVersion>latest</LangVersion>
