@@ -13,9 +13,9 @@ jobs:
       with:
         fetch-depth: 0
     - uses: actions/setup-dotnet@v1
-    - run: dotnet build --configuration Release
-    - run: dotnet test
-    - run: dotnet pack --configuration Release
+    - run: dotnet build --configuration Release --nologo
+    - run: dotnet test --no-build
+    - run: dotnet pack --configuration Release --no-build --nologo
     - run: |
         dotnet nuget push src/**/*.nupkg \
           --source https://nuget.pkg.github.com/unmango/index.json \
