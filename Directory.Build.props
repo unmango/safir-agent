@@ -18,6 +18,7 @@
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
   </PropertyGroup>
   
   <PropertyGroup Condition=" '$(IsPackable)' == 'true' ">
