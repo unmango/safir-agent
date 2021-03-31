@@ -6,7 +6,7 @@ env:
   DOTNET_NOLOGO: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 jobs:
-  build:
+  package_build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
