@@ -14,8 +14,7 @@ jobs:
       with:
         fetch-depth: 0
     - uses: actions/setup-dotnet@v1
-    - run: dotnet nuget update source --source github --username UnstoppableMango
-    - run: dotnet nuget update source --source github --password ${{ secrets.GITHUB_TOKEN }}
+    - run: dotnet nuget update source github --username UnstoppableMango --password ${{ secrets.GITHUB_TOKEN }}
     - run: dotnet build --configuration Release --nologo
     - run: dotnet test --no-build
     - run: dotnet pack --configuration Release --no-build --nologo
