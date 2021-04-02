@@ -82,22 +82,23 @@ namespace Safir.Agent.Tests.Queries
         }
 
         [Fact]
-        public async Task ReturnsRootEntries()
+        public async Task ReturnsPathRelativeToRoot()
         {
-            const string dir = "dir";
-            var entries = new[] { "entry" };
+            const string dir = "dir", entry = "entry", relative = "relative";
             _mock.Setup<IDirectory, bool>(x => x.Exists(dir)).Returns(true);
             _mock.Setup<IDirectory, IEnumerable<string>>(x =>
                     x.EnumerateFileSystemEntries(dir, It.IsAny<string>(), It.IsAny<EnumerationOptions>()))
-                .Returns(entries);
+                .Returns(new[] { entry });
+            _mock.Setup<IPath, string>(x => x.GetRelativePath(dir, entry)).Returns(relative);
             var request = new ListFilesRequest(dir);
 
             var result = await _handler.Handle(request, default);
-
+            
             Assert.NotNull(result);
-            Assert.Equal(entries.Length, result.Files.Count());
-            var files = result.Files.Select(x => x.Path);
-            Assert.True(entries.SequenceEqual(files));
+            Assert.NotEmpty(result.Files);
+            var paths = result.Files.Select(x => x.Path).ToList();
+            Assert.Contains(relative, paths);
+            Assert.DoesNotContain(entry, paths);
         }
     }
 }

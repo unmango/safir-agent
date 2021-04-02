@@ -26,11 +26,13 @@ namespace Safir.Agent.Queries
         };
         
         private readonly IDirectory _directory;
+        private readonly IPath _path;
         private readonly ILogger<ListFilesHandler> _logger;
         
-        public ListFilesHandler(IDirectory directory, ILogger<ListFilesHandler> logger)
+        public ListFilesHandler(IDirectory directory, IPath path, ILogger<ListFilesHandler> logger)
         {
             _directory = directory ?? throw new ArgumentNullException(nameof(directory));
+            _path = path ?? throw new ArgumentNullException(nameof(path));
             _logger = logger;
         }
         
@@ -53,7 +55,9 @@ namespace Safir.Agent.Queries
             var entries = _directory.EnumerateFileSystemEntries(root, "*", _enumerationOptions);
             
             _logger.LogTrace("Creating file response messages");
-            var files = entries.Select(x => new FileSystemEntry { Path = x });
+            var files = entries.Select(x => new FileSystemEntry {
+                Path = _path.GetRelativePath(root, x),
+            });
             
             return new ListFilesResponse(files);
         }
