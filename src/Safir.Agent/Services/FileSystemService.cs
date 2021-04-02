@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Grpc.Core.Utils;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,6 +14,7 @@ using Safir.Agent.Queries;
 
 namespace Safir.Agent.Services
 {
+    [UsedImplicitly]
     internal class FileSystemService : FileSystem.FileSystemBase
     {
         private readonly IOptions<AgentOptions> _options;

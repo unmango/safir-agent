@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Safir.Agent.Configuration;
 using Safir.Agent.Domain;
 using Safir.Agent.Protos;
 
@@ -18,7 +17,7 @@ namespace Safir.Agent.Queries
         public static readonly ListFilesResponse Empty = new(Enumerable.Empty<FileSystemEntry>());
     }
 
-    // ReSharper disable once ClassNeverInstantiated.Global
+    [UsedImplicitly]
     internal class ListFilesHandler : RequestHandler<ListFilesRequest, ListFilesResponse>
     {
         private static readonly EnumerationOptions _enumerationOptions = new() {
