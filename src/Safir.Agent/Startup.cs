@@ -34,6 +34,8 @@ namespace Safir.Agent
             services.AddTransient<IDirectory, SystemDirectoryWrapper>();
             services.AddTransient<IFile, SystemFileWrapper>();
             services.AddTransient<IPath, SystemPathWrapper>();
+
+            services.AddHostedService<DataDirectoryWatcher>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
