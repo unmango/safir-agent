@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Safir.Agent.Events
 {
+    // TODO: I don't think MS DI supports polymorphic dispatch
     [UsedImplicitly]
     internal sealed class QueuePublisherHandler : INotificationHandler<INotification>
     {
