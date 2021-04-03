@@ -16,6 +16,7 @@ namespace Safir.Agent.Services
     {
         private readonly IOptions<AgentOptions> _options;
         private readonly IDirectory _directory;
+        private readonly IPublisher _publisher;
         private readonly ILogger<DataDirectoryWatcher> _logger;
         private FileSystemWatcher? _fileWatcher;
 
@@ -27,13 +28,11 @@ namespace Safir.Agent.Services
         {
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _directory = directory ?? throw new ArgumentNullException(nameof(directory));
-            Publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
+            _publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
             _logger = logger;
         }
         
         private CancellationTokenSource? TokenSource { get; set; }
-        
-        private IPublisher Publisher { get; }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
@@ -101,24 +100,28 @@ namespace Safir.Agent.Services
 
         private async void OnCreated(object sender, FileSystemEventArgs e)
         {
+            _logger.LogDebug("Creating file created event");
             var notification = new FileCreated(e.FullPath);
             await SendAsync(this, notification);
         }
 
         private async void OnChanged(object sender, FileSystemEventArgs e)
         {
+            _logger.LogDebug("Creating file changed event");
             var notification = new FileChanged(e.FullPath);
             await SendAsync(this, notification);
         }
 
         private async void OnRenamed(object sender, FileSystemEventArgs e)
         {
+            _logger.LogDebug("Creating file renamed event");
             var notification = new FileRenamed(e.FullPath);
             await SendAsync(this, notification);
         }
 
         private async void OnDeleted(object sender, FileSystemEventArgs e)
         {
+            _logger.LogDebug("Creating file deleted event");
             var notification = new FileDeleted(e.FullPath);
             await SendAsync(this, notification);
         }
@@ -130,8 +133,9 @@ namespace Safir.Agent.Services
 
         private static Task SendAsync(DataDirectoryWatcher service, INotification notification)
         {
+            service._logger.LogDebug("Sending generic file event");
             var token = service.TokenSource?.Token ?? default;
-            return service.Publisher.Publish(notification, token);
+            return service._publisher.Publish(notification, token);
         }
     }
 }
