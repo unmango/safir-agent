@@ -7,124 +7,130 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Safir.Agent.Configuration;
+using Safir.Agent.Domain;
 using Safir.Agent.Events;
 
 namespace Safir.Agent.Services
 {
     internal sealed class DataDirectoryWatcher : IHostedService
     {
+        private readonly IOptions<AgentOptions> _options;
+        private readonly IDirectory _directory;
+        private readonly ILogger<DataDirectoryWatcher> _logger;
         private FileSystemWatcher? _fileWatcher;
 
         public DataDirectoryWatcher(
             IOptions<AgentOptions> options,
+            IDirectory directory,
             IPublisher publisher,
             ILogger<DataDirectoryWatcher> logger)
         {
-            Options = options ?? throw new ArgumentNullException(nameof(options));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
+            _directory = directory ?? throw new ArgumentNullException(nameof(directory));
             Publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
-            Logger = logger;
+            _logger = logger;
         }
         
         private CancellationTokenSource? TokenSource { get; set; }
         
-        private IOptions<AgentOptions> Options { get; }
-        
         private IPublisher Publisher { get; }
-        
-        private ILogger<DataDirectoryWatcher> Logger { get; }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            Logger.LogDebug("Starting data directory watcher");
+            _logger.LogDebug("Starting data directory watcher");
 
-            var root = Options.Value.DataDirectory;
+            var root = _options.Value.DataDirectory;
             if (string.IsNullOrWhiteSpace(root))
             {
-                Logger.LogInformation("No data directory set");
+                _logger.LogInformation("No data directory set");
                 return Task.CompletedTask;
             }
 
-            Logger.LogTrace("Creating filesystem watcher");
+            if (!_directory.Exists(root))
+            {
+                _logger.LogError("Data directory does not exist");
+                return Task.CompletedTask;
+            }
+
+            _logger.LogTrace("Creating filesystem watcher");
             _fileWatcher = new FileSystemWatcher(root) {
+                EnableRaisingEvents = true,
                 IncludeSubdirectories = true,
             };
 
-            Logger.LogTrace("Assigning filesystem watcher event handlers");
+            _logger.LogTrace("Assigning filesystem watcher event handlers");
             _fileWatcher.Created += OnCreated;
             _fileWatcher.Changed += OnChanged;
             _fileWatcher.Renamed += OnRenamed;
             _fileWatcher.Deleted += OnDeleted;
             _fileWatcher.Error += OnError;
             
-            Logger.LogTrace("Creating cancellation token source");
+            _logger.LogTrace("Creating cancellation token source");
             TokenSource = new CancellationTokenSource();
 
-            Logger.LogTrace("Finishing data directory watcher start");
+            _logger.LogTrace("Finishing data directory watcher start");
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            Logger.LogInformation("Stopping data directory watcher");
+            _logger.LogInformation("Stopping data directory watcher");
 
             if (TokenSource != null)
             {
-                Logger.LogTrace("Disposing token source");
+                _logger.LogTrace("Disposing token source");
                 TokenSource.Dispose();
             }
 
             if (_fileWatcher == null)
             {
-                Logger.LogTrace("No file watcher created, returning");
+                _logger.LogTrace("No file watcher created, returning");
                 return Task.CompletedTask;
             }
 
-            Logger.LogTrace("Removing filesystem watcher event handlers");
+            _logger.LogTrace("Removing filesystem watcher event handlers");
             _fileWatcher.Created -= OnCreated;
             _fileWatcher.Changed -= OnChanged;
             _fileWatcher.Renamed -= OnRenamed;
             _fileWatcher.Deleted -= OnDeleted;
             _fileWatcher.Error -= OnError;
             
-            Logger.LogTrace("Finishing data directory watcher stop");
+            _logger.LogTrace("Finishing data directory watcher stop");
             return Task.CompletedTask;
         }
 
-        private static async void OnCreated(object sender, FileSystemEventArgs e)
+        private async void OnCreated(object sender, FileSystemEventArgs e)
         {
             var notification = new FileCreated(e.FullPath);
-            await SendAsync(sender, notification);
+            await SendAsync(this, notification);
         }
 
-        private static async void OnChanged(object sender, FileSystemEventArgs e)
+        private async void OnChanged(object sender, FileSystemEventArgs e)
         {
             var notification = new FileChanged(e.FullPath);
-            await SendAsync(sender, notification);
+            await SendAsync(this, notification);
         }
 
-        private static async void OnRenamed(object sender, FileSystemEventArgs e)
+        private async void OnRenamed(object sender, FileSystemEventArgs e)
         {
             var notification = new FileRenamed(e.FullPath);
-            await SendAsync(sender, notification);
+            await SendAsync(this, notification);
         }
 
-        private static async void OnDeleted(object sender, FileSystemEventArgs e)
+        private async void OnDeleted(object sender, FileSystemEventArgs e)
         {
             var notification = new FileDeleted(e.FullPath);
-            await SendAsync(sender, notification);
+            await SendAsync(this, notification);
         }
 
-        private static void OnError(object sender, ErrorEventArgs e)
+        private void OnError(object sender, ErrorEventArgs e)
         {
-            var service = (DataDirectoryWatcher)sender;
-            service.Logger.LogError(e.GetException(), "Error in file watcher");
+            _logger.LogError(e.GetException(), "Error in file watcher");
         }
 
-        private static Task SendAsync(object sender, INotification notification)
+        private static Task SendAsync(DataDirectoryWatcher service, INotification notification)
         {
-            var service = (DataDirectoryWatcher)sender;
             var token = service.TokenSource?.Token ?? default;
-            
             return service.Publisher.Publish(notification, token);
         }
     }
