@@ -36,6 +36,18 @@ namespace Safir.Agent.Queries
         protected override ListFilesResponse Handle(ListFilesRequest request)
         {
             var (root, enumerationOptions) = request;
+            if (string.IsNullOrWhiteSpace(root))
+            {
+                _logger.LogDebug("No root configured");
+                return ListFilesResponse.Empty;
+            }
+
+            if (!_directory.Exists(root))
+            {
+                _logger.LogError("Data directory doesn't exist");
+                return ListFilesResponse.Empty;
+            }
+            
             enumerationOptions ??= new EnumerationOptions();
 
             _logger.LogTrace("Enumerating file system entries");
