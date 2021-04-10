@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -15,6 +16,7 @@ namespace Safir.Agent.Queries
     internal record ListFilesResponse(IEnumerable<FileSystemEntry> Files)
     {
         public static readonly ListFilesResponse Empty = new(Enumerable.Empty<FileSystemEntry>());
+        public static readonly Task<ListFilesResponse> EmptyTask = Task.FromResult(Empty);
     }
 
     [UsedImplicitly]
