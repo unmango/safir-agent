@@ -10,7 +10,7 @@ using Safir.Agent.Protos;
 
 namespace Safir.Agent.Queries
 {
-    internal record ListFilesRequest(string Root) : IRequest<ListFilesResponse>;
+    internal record ListFilesRequest(string Root, EnumerationOptions? Options = null) : IRequest<ListFilesResponse>;
 
     internal record ListFilesResponse(IEnumerable<FileSystemEntry> Files)
     {
@@ -20,10 +20,6 @@ namespace Safir.Agent.Queries
     [UsedImplicitly]
     internal class ListFilesHandler : RequestHandler<ListFilesRequest, ListFilesResponse>
     {
-        private static readonly EnumerationOptions _enumerationOptions = new() {
-            RecurseSubdirectories = true,
-        };
-        
         private readonly IDirectory _directory;
         private readonly IPath _path;
         private readonly ILogger<ListFilesHandler> _logger;
@@ -37,7 +33,7 @@ namespace Safir.Agent.Queries
         
         protected override ListFilesResponse Handle(ListFilesRequest request)
         {
-            var root = request.Root;
+            var (root, enumerationOptions) = request;
             if (string.IsNullOrWhiteSpace(root))
             {
                 _logger.LogDebug("No root configured");
@@ -51,7 +47,7 @@ namespace Safir.Agent.Queries
             }
 
             _logger.LogTrace("Enumerating file system entries");
-            var entries = _directory.EnumerateFileSystemEntries(root, "*", _enumerationOptions);
+            var entries = _directory.EnumerateFileSystemEntries(root, "*", enumerationOptions);
             
             _logger.LogTrace("Creating file response messages");
             var files = entries.Select(x => new FileSystemEntry {
