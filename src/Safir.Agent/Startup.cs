@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Safir.Agent.Configuration;
 using Safir.Agent.Domain;
+using Safir.Agent.Queries;
 using Safir.Agent.Services;
 using Serilog;
 
@@ -38,6 +39,8 @@ namespace Safir.Agent
             services.AddTransient<IPath, SystemPathWrapper>();
 
             services.AddHostedService<DataDirectoryWatcher>();
+
+            services.AddTransient<IPipelineBehavior<ListFilesRequest, ListFilesResponse>, ListFilesValidator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
