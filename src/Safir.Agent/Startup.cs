@@ -8,7 +8,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Safir.Agent.Configuration;
 using Safir.Agent.Domain;
-using Safir.Agent.Queries;
 using Safir.Agent.Services;
 using Serilog;
 
