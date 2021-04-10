@@ -10,6 +10,6 @@ namespace Safir.Agent.Configuration
 
         public int MaxDepth { get; [UsedImplicitly] set; }
         
-        public EnumerationOptions EnumerationOptions { get; set; }
+        public EnumerationOptions? EnumerationOptions { get; [UsedImplicitly] set; }
     }
 }
