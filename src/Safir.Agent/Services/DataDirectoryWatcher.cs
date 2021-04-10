@@ -3,13 +3,11 @@ using System.IO;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Safir.Agent.Configuration;
 using Safir.Agent.Domain;
-using Safir.Agent.Events;
 
 namespace Safir.Agent.Services
 {
