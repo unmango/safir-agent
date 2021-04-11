@@ -10,5 +10,5 @@ namespace Safir.Agent.Events
     
     public record FileDeleted(string Path) : IFileSystemEvent;
     
-    public record FileRenamed(string Path) : IFileSystemEvent;
+    public record FileRenamed(string Path, string OldPath) : IFileSystemEvent;
 }
