@@ -90,25 +90,30 @@ namespace Safir.Agent.Services
 
         private static void CreateObservablesFromEvents(DataDirectoryWatcher service, FileSystemWatcher watcher)
         {
-            service.Created = Observable.FromEvent<FileSystemEventHandler, FileSystemEventArgs>(
-                x => watcher.Created += x,
-                x => watcher.Created -= x);
+            service.Created = Observable.FromEventPattern<FileSystemEventHandler, FileSystemEventArgs>(
+                    x => watcher.Created += x,
+                    x => watcher.Created -= x)
+                .Select(x => x.EventArgs);
 
-            service.Changed = Observable.FromEvent<FileSystemEventHandler, FileSystemEventArgs>(
-                x => watcher.Changed += x,
-                x => watcher.Changed -= x);
+            service.Changed = Observable.FromEventPattern<FileSystemEventHandler, FileSystemEventArgs>(
+                    x => watcher.Changed += x,
+                    x => watcher.Changed -= x)
+                .Select(x => x.EventArgs);
 
-            service.Deleted = Observable.FromEvent<FileSystemEventHandler, FileSystemEventArgs>(
-                x => watcher.Deleted += x,
-                x => watcher.Deleted -= x);
+            service.Deleted = Observable.FromEventPattern<FileSystemEventHandler, FileSystemEventArgs>(
+                    x => watcher.Deleted += x,
+                    x => watcher.Deleted -= x)
+                .Select(x => x.EventArgs);
 
-            service.Renamed = Observable.FromEvent<RenamedEventHandler, RenamedEventArgs>(
-                x => watcher.Renamed += x,
-                x => watcher.Renamed -= x);
+            service.Renamed = Observable.FromEventPattern<RenamedEventHandler, RenamedEventArgs>(
+                    x => watcher.Renamed += x,
+                    x => watcher.Renamed -= x)
+                .Select(x => x.EventArgs);
 
-            service.Error = Observable.FromEvent<ErrorEventHandler, ErrorEventArgs>(
-                x => watcher.Error += x,
-                x => watcher.Error -= x);
+            service.Error = Observable.FromEventPattern<ErrorEventHandler, ErrorEventArgs>(
+                    x => watcher.Error += x,
+                    x => watcher.Error -= x)
+                .Select(x => x.EventArgs);
         }
     }
 }
