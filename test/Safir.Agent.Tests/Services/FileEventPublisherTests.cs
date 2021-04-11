@@ -1,4 +1,5 @@
 using System.IO;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,13 +25,11 @@ namespace Safir.Agent.Tests.Services
         [Fact]
         public async Task PublishesCreatedEventsWhenStarted()
         {
-            var subject = new Subject<FileSystemEventArgs>();
+            SetupObservables();
             var watcher = _mocker.GetMock<IFileWatcher>();
             var publisher = _mocker.GetMock<IPublisher>();
+            var subject = new Subject<FileSystemEventArgs>();
             watcher.SetupGet(x => x.Created).Returns(subject);
-            watcher.SetupGet(x => x.Changed).Returns(new Subject<FileSystemEventArgs>());
-            watcher.SetupGet(x => x.Deleted).Returns(new Subject<FileSystemEventArgs>());
-            watcher.SetupGet(x => x.Renamed).Returns(new Subject<RenamedEventArgs>());
             const string name = "name";
 
             await _service.StartAsync(default);
@@ -44,13 +43,11 @@ namespace Safir.Agent.Tests.Services
         [Fact]
         public async Task PublishesChangedEventsWhenStarted()
         {
-            var subject = new Subject<FileSystemEventArgs>();
+            SetupObservables();
             var watcher = _mocker.GetMock<IFileWatcher>();
             var publisher = _mocker.GetMock<IPublisher>();
-            watcher.SetupGet(x => x.Created).Returns(new Subject<FileSystemEventArgs>());
+            var subject = new Subject<FileSystemEventArgs>();
             watcher.SetupGet(x => x.Changed).Returns(subject);
-            watcher.SetupGet(x => x.Deleted).Returns(new Subject<FileSystemEventArgs>());
-            watcher.SetupGet(x => x.Renamed).Returns(new Subject<RenamedEventArgs>());
             const string name = "name";
 
             await _service.StartAsync(default);
@@ -64,13 +61,11 @@ namespace Safir.Agent.Tests.Services
         [Fact]
         public async Task PublishesDeletedEventsWhenStarted()
         {
-            var subject = new Subject<FileSystemEventArgs>();
+            SetupObservables();
             var watcher = _mocker.GetMock<IFileWatcher>();
             var publisher = _mocker.GetMock<IPublisher>();
-            watcher.SetupGet(x => x.Created).Returns(new Subject<FileSystemEventArgs>());
-            watcher.SetupGet(x => x.Changed).Returns(new Subject<FileSystemEventArgs>());
+            var subject = new Subject<FileSystemEventArgs>();
             watcher.SetupGet(x => x.Deleted).Returns(subject);
-            watcher.SetupGet(x => x.Renamed).Returns(new Subject<RenamedEventArgs>());
             const string name = "name";
 
             await _service.StartAsync(default);
@@ -84,12 +79,10 @@ namespace Safir.Agent.Tests.Services
         [Fact]
         public async Task PublishesRenamedEventsWhenStarted()
         {
-            var subject = new Subject<RenamedEventArgs>();
+            SetupObservables();
             var watcher = _mocker.GetMock<IFileWatcher>();
             var publisher = _mocker.GetMock<IPublisher>();
-            watcher.SetupGet(x => x.Created).Returns(new Subject<FileSystemEventArgs>());
-            watcher.SetupGet(x => x.Changed).Returns(new Subject<FileSystemEventArgs>());
-            watcher.SetupGet(x => x.Deleted).Returns(new Subject<FileSystemEventArgs>());
+            var subject = new Subject<RenamedEventArgs>();
             watcher.SetupGet(x => x.Renamed).Returns(subject);
             const string name = "name", oldName = "old";
 
@@ -104,9 +97,9 @@ namespace Safir.Agent.Tests.Services
         [Fact]
         public async Task StopDisposesCreatedSubscription()
         {
-            var subject = new Subject<FileSystemEventArgs>();
             SetupObservables();
             var watcher = _mocker.GetMock<IFileWatcher>();
+            var subject = new Subject<FileSystemEventArgs>();
             watcher.SetupGet(x => x.Created).Returns(subject);
 
             await _service.StartAsync(default);
@@ -119,9 +112,9 @@ namespace Safir.Agent.Tests.Services
         [Fact]
         public async Task StopDisposesChangedSubscription()
         {
-            var subject = new Subject<FileSystemEventArgs>();
             SetupObservables();
             var watcher = _mocker.GetMock<IFileWatcher>();
+            var subject = new Subject<FileSystemEventArgs>();
             watcher.SetupGet(x => x.Changed).Returns(subject);
 
             await _service.StartAsync(default);
@@ -134,9 +127,9 @@ namespace Safir.Agent.Tests.Services
         [Fact]
         public async Task StopDisposesDeletedSubscription()
         {
-            var subject = new Subject<FileSystemEventArgs>();
             SetupObservables();
             var watcher = _mocker.GetMock<IFileWatcher>();
+            var subject = new Subject<FileSystemEventArgs>();
             watcher.SetupGet(x => x.Deleted).Returns(subject);
 
             await _service.StartAsync(default);
@@ -149,9 +142,9 @@ namespace Safir.Agent.Tests.Services
         [Fact]
         public async Task StopDisposesRenamedSubscription()
         {
-            var subject = new Subject<RenamedEventArgs>();
             SetupObservables();
             var watcher = _mocker.GetMock<IFileWatcher>();
+            var subject = new Subject<RenamedEventArgs>();
             watcher.SetupGet(x => x.Renamed).Returns(subject);
 
             await _service.StartAsync(default);
@@ -163,11 +156,12 @@ namespace Safir.Agent.Tests.Services
 
         private void SetupObservables()
         {
+            // The reactive extensions expect a real sequence, so give them a default
             var watcher = _mocker.GetMock<IFileWatcher>();
-            watcher.SetupGet(x => x.Created).Returns(new Subject<FileSystemEventArgs>());
-            watcher.SetupGet(x => x.Changed).Returns(new Subject<FileSystemEventArgs>());
-            watcher.SetupGet(x => x.Deleted).Returns(new Subject<FileSystemEventArgs>());
-            watcher.SetupGet(x => x.Renamed).Returns(new Subject<RenamedEventArgs>());
+            watcher.SetupGet(x => x.Created).Returns(Observable.Empty<FileSystemEventArgs>());
+            watcher.SetupGet(x => x.Changed).Returns(Observable.Empty<FileSystemEventArgs>());
+            watcher.SetupGet(x => x.Deleted).Returns(Observable.Empty<FileSystemEventArgs>());
+            watcher.SetupGet(x => x.Renamed).Returns(Observable.Empty<RenamedEventArgs>());
         }
     }
 }
