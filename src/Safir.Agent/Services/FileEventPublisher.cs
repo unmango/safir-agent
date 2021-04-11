@@ -49,28 +49,28 @@ namespace Safir.Agent.Services
 
         private Task<Unit> OnCreated(FileSystemEventArgs eventArgs, CancellationToken cancellationToken)
         {
-            _logger.LogDebug("Publishing created event");
+            _logger.LogTrace("Publishing created event");
             var @event = new FileCreated(eventArgs.Name!);
             return Publish(_publisher, @event, cancellationToken);
         }
 
         private Task<Unit> OnChanged(FileSystemEventArgs eventArgs, CancellationToken cancellationToken)
         {
-            _logger.LogDebug("Publishing changed event");
+            _logger.LogTrace("Publishing changed event");
             var @event = new FileChanged(eventArgs.Name!);
             return Publish(_publisher, @event, cancellationToken);
         }
 
         private Task<Unit> OnDeleted(FileSystemEventArgs eventArgs, CancellationToken cancellationToken)
         {
-            _logger.LogDebug("Publishing deleted event");
+            _logger.LogTrace("Publishing deleted event");
             var @event = new FileDeleted(eventArgs.Name!);
             return Publish(_publisher, @event, cancellationToken);
         }
 
         private Task<Unit> OnRenamed(RenamedEventArgs eventArgs, CancellationToken cancellationToken)
         {
-            _logger.LogDebug("Publishing renamed event");
+            _logger.LogTrace("Publishing renamed event");
             var @event = new FileRenamed(eventArgs.Name!, eventArgs.OldName!);
             return Publish(_publisher, @event, cancellationToken);
         }
