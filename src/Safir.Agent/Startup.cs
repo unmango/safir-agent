@@ -40,6 +40,8 @@ namespace Safir.Agent
             services.AddSingleton<DataDirectoryWatcher>();
             services.AddHostedService(s => s.GetRequiredService<DataDirectoryWatcher>());
             services.AddSingleton<IFileWatcher>(s => s.GetRequiredService<DataDirectoryWatcher>());
+
+            services.AddHostedService<FileEventPublisher>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
