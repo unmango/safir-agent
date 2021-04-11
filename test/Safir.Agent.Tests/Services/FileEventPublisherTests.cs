@@ -100,5 +100,74 @@ namespace Safir.Agent.Tests.Services
                 It.Is<FileRenamed>(e => e.Path == name && e.OldPath == oldName),
                 It.IsAny<CancellationToken>()));
         }
+
+        [Fact]
+        public async Task StopDisposesCreatedSubscription()
+        {
+            var subject = new Subject<FileSystemEventArgs>();
+            SetupObservables();
+            var watcher = _mocker.GetMock<IFileWatcher>();
+            watcher.SetupGet(x => x.Created).Returns(subject);
+
+            await _service.StartAsync(default);
+            Assert.True(subject.HasObservers);
+            
+            await _service.StopAsync(default);
+            Assert.False(subject.HasObservers);
+        }
+
+        [Fact]
+        public async Task StopDisposesChangedSubscription()
+        {
+            var subject = new Subject<FileSystemEventArgs>();
+            SetupObservables();
+            var watcher = _mocker.GetMock<IFileWatcher>();
+            watcher.SetupGet(x => x.Changed).Returns(subject);
+
+            await _service.StartAsync(default);
+            Assert.True(subject.HasObservers);
+            
+            await _service.StopAsync(default);
+            Assert.False(subject.HasObservers);
+        }
+
+        [Fact]
+        public async Task StopDisposesDeletedSubscription()
+        {
+            var subject = new Subject<FileSystemEventArgs>();
+            SetupObservables();
+            var watcher = _mocker.GetMock<IFileWatcher>();
+            watcher.SetupGet(x => x.Deleted).Returns(subject);
+
+            await _service.StartAsync(default);
+            Assert.True(subject.HasObservers);
+            
+            await _service.StopAsync(default);
+            Assert.False(subject.HasObservers);
+        }
+
+        [Fact]
+        public async Task StopDisposesRenamedSubscription()
+        {
+            var subject = new Subject<RenamedEventArgs>();
+            SetupObservables();
+            var watcher = _mocker.GetMock<IFileWatcher>();
+            watcher.SetupGet(x => x.Renamed).Returns(subject);
+
+            await _service.StartAsync(default);
+            Assert.True(subject.HasObservers);
+            
+            await _service.StopAsync(default);
+            Assert.False(subject.HasObservers);
+        }
+
+        private void SetupObservables()
+        {
+            var watcher = _mocker.GetMock<IFileWatcher>();
+            watcher.SetupGet(x => x.Created).Returns(new Subject<FileSystemEventArgs>());
+            watcher.SetupGet(x => x.Changed).Returns(new Subject<FileSystemEventArgs>());
+            watcher.SetupGet(x => x.Deleted).Returns(new Subject<FileSystemEventArgs>());
+            watcher.SetupGet(x => x.Renamed).Returns(new Subject<RenamedEventArgs>());
+        }
     }
 }
