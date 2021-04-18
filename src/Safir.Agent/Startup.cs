@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Safir.Agent.Configuration;
+using Safir.Agent.DependencyInjection;
 using Safir.Agent.Domain;
 using Safir.Agent.Services;
 using Safir.Messaging.DependencyInjection;
@@ -27,7 +28,6 @@ namespace Safir.Agent
         {
             services.AddGrpc();
             services.AddGrpcReflection();
-
             services.AddMediatR(typeof(Startup));
             services.AddSafirMessaging(options => {
                 options.ConnectionString = Configuration["Redis"];
