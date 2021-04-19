@@ -19,8 +19,4 @@
     <PackageReference Include="Safir.Protos" Version="0.0.0-alpha.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Safir.Agent.Protos\Safir.Agent.Protos.csproj" />
-  </ItemGroup>
-
 </Project>
