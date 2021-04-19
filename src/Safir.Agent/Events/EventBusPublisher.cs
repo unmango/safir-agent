@@ -1,8 +1,11 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Safir.Agent.Protos;
+using Safir.Messaging;
 
 namespace Safir.Agent.Events
 {
@@ -13,17 +16,19 @@ namespace Safir.Agent.Events
         INotificationHandler<FileDeleted>,
         INotificationHandler<FileRenamed>
     {
+        private readonly IEventBus _bus;
         private readonly ILogger<EventBusPublisher> _logger;
 
-        public EventBusPublisher(ILogger<EventBusPublisher> logger)
+        public EventBusPublisher(IEventBus bus, ILogger<EventBusPublisher> logger)
         {
+            _bus = bus ?? throw new ArgumentNullException(nameof(bus));
             _logger = logger;
         }
 
         public Task Handle(FileCreated notification, CancellationToken cancellationToken)
         {
             _logger.LogTrace("Publishing created event to bus");
-            return Task.CompletedTask;
+            return _bus.PublishAsync(notification);
         }
 
         public Task Handle(FileChanged notification, CancellationToken cancellationToken)
