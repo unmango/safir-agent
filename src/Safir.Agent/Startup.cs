@@ -31,7 +31,9 @@ namespace Safir.Agent
             services.AddGrpcReflection();
 
             services.AddMediatR(typeof(Startup));
-            services.AddSafirMessaging();
+            services.AddSafirMessaging(options => {
+                options.ConnectionString = Configuration["Redis"];
+            });
             services.Configure<AgentOptions>(Configuration);
             services.AddTransient<IPostConfigureOptions<AgentOptions>, ReplaceEnvironmentVariables>();
 
