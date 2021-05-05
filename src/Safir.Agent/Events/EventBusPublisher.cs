@@ -6,15 +6,16 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Safir.Agent.Protos;
 using Safir.Messaging;
+using Safir.Messaging.MediatR;
 
 namespace Safir.Agent.Events
 {
     [UsedImplicitly]
     internal sealed class EventBusPublisher :
-        INotificationHandler<FileCreated>,
-        INotificationHandler<FileChanged>,
-        INotificationHandler<FileDeleted>,
-        INotificationHandler<FileRenamed>
+        INotificationHandler<Notification<FileCreated>>,
+        INotificationHandler<Notification<FileChanged>>,
+        INotificationHandler<Notification<FileDeleted>>,
+        INotificationHandler<Notification<FileRenamed>>
     {
         private readonly IEventBus _bus;
         private readonly ILogger<EventBusPublisher> _logger;
@@ -25,28 +26,28 @@ namespace Safir.Agent.Events
             _logger = logger;
         }
 
-        public Task Handle(FileCreated notification, CancellationToken cancellationToken)
+        public Task Handle(Notification<FileCreated> notification, CancellationToken cancellationToken)
         {
             _logger.LogTrace("Publishing created event to bus");
-            return _bus.PublishAsync(notification);
+            return _bus.PublishAsync(notification, cancellationToken);
         }
 
-        public Task Handle(FileChanged notification, CancellationToken cancellationToken)
+        public Task Handle(Notification<FileChanged> notification, CancellationToken cancellationToken)
         {
             _logger.LogTrace("Publishing changed event to bus");
-            return Task.CompletedTask;
+            return _bus.PublishAsync(notification, cancellationToken);
         }
 
-        public Task Handle(FileDeleted notification, CancellationToken cancellationToken)
+        public Task Handle(Notification<FileDeleted> notification, CancellationToken cancellationToken)
         {
             _logger.LogTrace("Publishing deleted event to bus");
-            return Task.CompletedTask;
+            return _bus.PublishAsync(notification, cancellationToken);
         }
 
-        public Task Handle(FileRenamed notification, CancellationToken cancellationToken)
+        public Task Handle(Notification<FileRenamed> notification, CancellationToken cancellationToken)
         {
             _logger.LogTrace("Publishing renamed event to bus");
-            return Task.CompletedTask;
+            return _bus.PublishAsync(notification, cancellationToken);
         }
     }
 }
