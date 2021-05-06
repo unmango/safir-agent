@@ -1,4 +1,11 @@
 services:
+  agent:
+    build:
+      context: .
+      args:
+        GithubUsername: ${GITHUB_USERNAME}
+        GithubPassword: ${GITHUB_PASSWORD}
+  
   redis:
     image: redis
     ports:

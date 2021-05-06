@@ -1,5 +1,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 
+ARG GithubUsername
+ARG GithubPassword
+
 WORKDIR /build
 COPY src/Safir.Agent/*.csproj .
 COPY NuGet.Config .
