@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -7,27 +8,25 @@ namespace Safir.Agent.Services
 {
     internal sealed class RedisService : IHostedService
     {
+        private readonly ILifecycleManager<ConnectionMultiplexer> _connectionManager;
         private IConnectionMultiplexer? _connection;
+
+        public RedisService(ILifecycleManager<ConnectionMultiplexer> connectionManager)
+        {
+            _connectionManager = connectionManager ?? throw new ArgumentNullException(nameof(connectionManager));
+        }
         
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            var configuration = new ConfigurationOptions();
-            _connection = await ConnectionMultiplexer.ConnectAsync(configuration);
-            
-            
-                
-            throw new System.NotImplementedException();
+            _connection = await _connectionManager.GetOrCreateAsync(string.Empty);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            if (_connection != null)
-            {
-                await _connection.CloseAsync();
-                _connection.Dispose();
-            }
+            if (_connection == null) return;
             
-            throw new System.NotImplementedException();
+            await _connection.CloseAsync();
+            _connection.Dispose();
         }
     }
 }

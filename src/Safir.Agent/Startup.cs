@@ -12,6 +12,7 @@ using Safir.Agent.Domain;
 using Safir.Agent.Services;
 using Safir.Messaging.DependencyInjection;
 using Serilog;
+using StackExchange.Redis;
 
 namespace Safir.Agent
 {
@@ -29,6 +30,10 @@ namespace Safir.Agent
             services.AddGrpc();
             services.AddGrpcReflection();
             services.AddMediatR(typeof(Startup));
+            services.AddStackExchangeRedisCache(options => {
+                options.Configuration = Configuration["Redis"];
+            });
+            
             services.AddSafirMessaging(options => {
                 options.ConnectionString = Configuration["Redis"];
             });
@@ -42,7 +47,9 @@ namespace Safir.Agent
             services.AddSingleton<DataDirectoryWatcher>();
             services.AddHostedService(s => s.GetRequiredService<DataDirectoryWatcher>());
             services.AddSingleton<IFileWatcher>(s => s.GetRequiredService<DataDirectoryWatcher>());
+            services.AddSingleton<ILifecycleManager<ConnectionMultiplexer>, RedisConnectionLifecycleManager>();
 
+            services.AddHostedService<RedisService>();
             services.AddHostedService<FileEventPublisher>();
         }
 

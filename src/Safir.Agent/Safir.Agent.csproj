@@ -11,6 +11,7 @@
     <PackageReference Include="JetBrains.Annotations" Version="2021.2.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
     <PackageReference Include="Safir.Grpc" Version="0.7.0" />
     <PackageReference Include="Safir.Messaging" Version="0.7.0" />
     <PackageReference Include="Safir.Messaging.MediatR" Version="0.7.0" />
