@@ -28,6 +28,8 @@ namespace Safir.Agent
             services.AddGrpc();
             services.AddGrpcReflection();
 
+            services.AddControllers();
+
             services.AddMediatR(typeof(Startup));
             services.AddSafirMessaging(options => {
                 options.ConnectionString = Configuration["Redis"];
@@ -62,6 +64,8 @@ namespace Safir.Agent
             app.UseEndpoints(endpoints => {
                 endpoints.MapGrpcService<FileSystemService>();
                 endpoints.MapGrpcService<HostService>();
+
+                // endpoints.MapDefaultControllerRoute();
 
                 if (env.IsDevelopment())
                 {
