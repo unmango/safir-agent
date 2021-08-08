@@ -64,7 +64,8 @@ namespace Safir.Agent
             app.UseGrpcWeb();
 
             var options = app.ApplicationServices
-                .GetRequiredService<IOptions<AgentOptions>>().Value;
+                .GetRequiredService<IOptions<AgentOptions>>()
+                .Value;
 
             if (env.IsDevelopment() || options.EnableSwagger)
             {
