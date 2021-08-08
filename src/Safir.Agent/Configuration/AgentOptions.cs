@@ -7,6 +7,8 @@ namespace Safir.Agent.Configuration
     {
         public string? DataDirectory { get; set; }
         
+        public bool EnableGrpcReflection { get; set; }
+        
         public bool EnableSwagger { get; set; }
         
         public EnumerationOptions? EnumerationOptions { get; [UsedImplicitly] set; }

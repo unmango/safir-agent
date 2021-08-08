@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using Safir.Agent.Configuration;
 using Safir.Agent.Domain;
 using Safir.Agent.Services;
@@ -53,7 +52,7 @@ namespace Safir.Agent
             services.AddHostedService<FileEventPublisher>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -64,25 +63,27 @@ namespace Safir.Agent
             app.UseHttpsRedirection();
             app.UseGrpcWeb();
 
-            if (env.IsDevelopment() || Configuration.GetValue<bool>("EnableSwagger"))
+            var options = app.ApplicationServices
+                .GetRequiredService<IOptions<AgentOptions>>().Value;
+
+            if (env.IsDevelopment() || options.EnableSwagger)
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            
             app.UseRouting();
-
             app.UseEndpoints(endpoints => {
                 endpoints.MapGrpcService<FileSystemService>();
                 endpoints.MapGrpcService<HostService>();
 
-                if (env.IsDevelopment())
+                if (env.IsDevelopment() || options.EnableGrpcReflection)
                 {
                     endpoints.MapGrpcReflectionService();
                 }
 
                 endpoints.MapGet("/config", async context => {
-                    var options = context.RequestServices.GetRequiredService<IOptions<AgentOptions>>();
-                    await context.Response.WriteAsJsonAsync(options.Value);
+                    await context.Response.WriteAsJsonAsync(options);
                 });
 
                 endpoints.MapGet("/", context => {
