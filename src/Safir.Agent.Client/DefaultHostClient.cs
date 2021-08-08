@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
@@ -13,8 +14,8 @@ namespace Safir.Agent.Client
 
         public DefaultHostClient(Host.HostClient client, ILogger<DefaultHostClient> logger)
         {
-            _client = client;
-            _logger = logger;
+            _client = client ?? throw new ArgumentNullException(nameof(client));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         
         public async Task<HostInfo> GetHostInfoAsync(CancellationToken cancellationToken = default)

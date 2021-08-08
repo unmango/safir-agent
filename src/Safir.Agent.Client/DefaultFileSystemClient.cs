@@ -16,7 +16,7 @@ namespace Safir.Agent.Client
         public DefaultFileSystemClient(FileSystem.FileSystemClient client, ILogger<DefaultFileSystemClient> logger)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         
         public IAsyncEnumerable<FileSystemEntry> ListAsync(CancellationToken cancellationToken = default)
