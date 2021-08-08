@@ -64,15 +64,12 @@ namespace Safir.Agent
             }
 
             app.UseSerilogRequestLogging();
+            app.UseHttpsRedirection();
 
             app.UseGrpcWeb(new GrpcWebOptions {
                 DefaultEnabled = true
             });
 
-            app.UseHttpsRedirection();
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
-            
             app.UseSwagger();
             app.UseSwaggerUI(c => {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Safir Agent V1");
