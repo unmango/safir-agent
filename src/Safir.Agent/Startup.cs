@@ -30,20 +30,17 @@ namespace Safir.Agent
             services.AddGrpc();
             services.AddGrpcHttpApi();
             services.AddGrpcReflection();
-            services.AddSwaggerGen(c => {
-                c.SwaggerDoc("v1", new OpenApiInfo {
-                    Title = "Safir Agent",
-                    Version = "v1"
-                });
-            });
+            
+            services.AddSwaggerGen();
             services.AddGrpcSwagger();
 
             services.AddMediatR(typeof(Startup));
-            services.AddSafirMessaging(options => {
-                options.ConnectionString = Configuration["Redis"];
-            });
+            services.AddSafirMessaging();
             services.Configure<AgentOptions>(Configuration);
             services.AddTransient<IPostConfigureOptions<AgentOptions>, ReplaceEnvironmentVariables>();
+            services.ConfigureOptions<GrpcWeb>();
+            services.ConfigureOptions<SafirMessaging>();
+            services.ConfigureOptions<Swagger>();
 
             services.AddTransient<IDirectory, SystemDirectoryWrapper>();
             services.AddTransient<IFile, SystemFileWrapper>();
@@ -56,7 +53,7 @@ namespace Safir.Agent
             services.AddHostedService<FileEventPublisher>();
         }
 
-        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -65,16 +62,13 @@ namespace Safir.Agent
 
             app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
+            app.UseGrpcWeb();
 
-            app.UseGrpcWeb(new GrpcWebOptions {
-                DefaultEnabled = true
-            });
-
-            app.UseSwagger();
-            app.UseSwaggerUI(c => {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Safir Agent V1");
-            });
-
+            if (env.IsDevelopment() || Configuration.GetValue<bool>("EnableSwagger"))
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
             app.UseRouting();
 
             app.UseEndpoints(endpoints => {
