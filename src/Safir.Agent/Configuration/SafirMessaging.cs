@@ -4,7 +4,7 @@ using Safir.Messaging.Configuration;
 
 namespace Safir.Agent.Configuration
 {
-    public class SafirMessaging : IConfigureOptions<MessagingOptions>
+    internal class SafirMessaging : IConfigureOptions<MessagingOptions>
     {
         private readonly AgentOptions _options;
 

@@ -7,7 +7,7 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Safir.Agent.Configuration
 {
-    public class Swagger :
+    internal class Swagger :
         IConfigureOptions<SwaggerGenOptions>,
         IConfigureOptions<SwaggerUIOptions>
     {

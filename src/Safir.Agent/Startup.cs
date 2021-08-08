@@ -34,9 +34,12 @@ namespace Safir.Agent
             services.AddGrpcSwagger();
 
             services.AddMediatR(typeof(Startup));
+            
             services.AddSafirMessaging();
+            
             services.Configure<AgentOptions>(Configuration);
-            services.AddTransient<IPostConfigureOptions<AgentOptions>, ReplaceEnvironmentVariables>();
+            services.ConfigureOptions<ReplaceEnvironmentVariables>();
+            services.ConfigureOptions<ReplaceUnderscores>();
             services.ConfigureOptions<GrpcWeb>();
             services.ConfigureOptions<SafirMessaging>();
             services.ConfigureOptions<Swagger>();
