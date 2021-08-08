@@ -6,16 +6,16 @@ namespace Safir.Agent.Configuration
 {
     public class SafirMessaging : IConfigureOptions<MessagingOptions>
     {
-        private readonly IConfiguration _configuration;
+        private readonly AgentOptions _options;
 
         public SafirMessaging(IConfiguration configuration)
         {
-            _configuration = configuration;
+            _options = configuration.Get<AgentOptions>();
         }
 
         public void Configure(MessagingOptions options)
         {
-            options.ConnectionString = _configuration["Redis"];
+            options.ConnectionString = _options.Redis;
         }
     }
 }
