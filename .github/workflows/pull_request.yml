@@ -21,7 +21,7 @@ jobs:
           --store-password-in-clear-text
 
     - name: Restore dependencies
-      run: dotnet restore --no-logo
+      run: dotnet restore
 
     - name: Build solution
       run: dotnet build --no-restore --no-logo
