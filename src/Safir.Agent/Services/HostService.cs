@@ -6,7 +6,6 @@ using Grpc.Core;
 using Microsoft.Extensions.Options;
 using Safir.Agent.Configuration;
 using Safir.Protos;
-using Host = Safir.Protos.Host; // This was breaking the CI docker build for some reason...
 
 namespace Safir.Agent.Services
 {
