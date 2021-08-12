@@ -21,13 +21,13 @@ jobs:
           --store-password-in-clear-text
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore --nologo
 
     - name: Build solution
-      run: dotnet build --no-restore --no-logo
+      run: dotnet build --no-restore --nologo
 
     - name: Run tests
-      run: dotnet test --no-build --verbosity normal --no-logo
+      run: dotnet test --no-build --verbosity normal --nologo
 
   docker_build:
     runs-on: ubuntu-latest
