@@ -32,24 +32,19 @@ namespace Safir.Agent
             
             services.AddSwaggerGen();
             services.AddGrpcSwagger();
+            services.ConfigureOptions<Swagger>();
             
-            services.AddCors(o => o.AddPolicy("AllowAll", builder =>
-            {
-                builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc-Accept-Encoding");
-            }));
+            services.AddCors();
+            services.ConfigureOptions<Cors>();
 
             services.AddMediatR(typeof(Startup));
             
             services.AddSafirMessaging();
+            services.ConfigureOptions<SafirMessaging>();
             
             services.Configure<AgentOptions>(Configuration);
             services.ConfigureOptions<ReplaceEnvironmentVariables>();
             services.ConfigureOptions<ReplaceUnderscores>();
-            services.ConfigureOptions<SafirMessaging>();
-            services.ConfigureOptions<Swagger>();
 
             services.AddTransient<IDirectory, SystemDirectoryWrapper>();
             services.AddTransient<IFile, SystemFileWrapper>();
@@ -83,9 +78,7 @@ namespace Safir.Agent
             }
             
             app.UseRouting();
-            app.UseGrpcWeb(new GrpcWebOptions {
-                DefaultEnabled = true,
-            });
+            app.UseGrpcWeb(new() { DefaultEnabled = true });
             app.UseCors();
             app.UseEndpoints(endpoints => {
                 endpoints.MapGrpcService<FileSystemService>().RequireCors("AllowAll");
