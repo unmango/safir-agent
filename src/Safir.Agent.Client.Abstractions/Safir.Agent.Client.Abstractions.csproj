@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <PackageReference Include="Grpc.Core" Version="2.39.1" />
-    <PackageReference Include="JetBrains.Annotations" Version="2021.2.0" />
     <PackageReference Include="Safir.Protos" Version="0.7.12" />
   </ItemGroup>
 
