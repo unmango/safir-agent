@@ -4,13 +4,15 @@ ARG GithubUsername
 ARG GithubPassword
 
 WORKDIR /build
-COPY src/Safir.Agent/*.csproj .
+COPY src/Safir.Agent/*.csproj ./Safir.Agent/
+COPY src/Safir.Agent.Abstractions/*.csproj ./Safir.Agent.Abstractions/
 COPY NuGet.Docker.Config NuGet.Config
-RUN dotnet restore
+RUN dotnet restore Safir.Agent
 
-COPY src/Safir.Agent/ .
+COPY src/Safir.Agent ./Safir.Agent/
+COPY src/Safir.Agent.Abstractions ./Safir.Agent.Abstractions/
 COPY Directory.Build.props .
-RUN dotnet publish --no-restore --configuration Release --output /out
+RUN dotnet publish Safir.Agent --no-restore --configuration Release --output /out
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
